@@ -1,0 +1,73 @@
+---
+layout: runbook
+title: '#4471 · one ticket, more than one problem'
+owner: arahagikoa
+status: proposed
+reviewed: 2026-11-10
+signature: arahagikoa
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+[#4471](/kb/incidents/4471) is marked known, with one fix queued. The reports merged into it do
+not all describe the same bug. Run the desk's own cause logic over the export and they split,
+and each part needs a fix of its own.
+
+<ProblemTable ticket={4471} />
+
+<Callout kind="warn">
+One fix is queued, and it is the right fix for the largest group only. The other groups stay
+broken after it ships, and the people in them will report again.
+</Callout>
+
+## parser · the shared parser reads every date month first
+
+Every tenant on file writes the day before the month, so a date they type as 12/05 comes back as
+December. This is the bug #4471 names and the one the queued fix is for.
+
+## hint · booking-v3 prints the order its tenants do not use
+
+The booking-v3 form prints `MM/DD/YYYY` under its date field. Its tenants write the day first,
+their people type what the hint tells them, and the form then reads it the tenant's way. The date
+flips for the opposite reason, so a fix to the parser does not touch it. Only form reports from
+booking-v3 tenants land here, which is why this group is small and steady rather than loud.
+
+## one-day move · the invite lands a day out, not a month out
+
+These reports do not describe a flipped month. A month-first parse cannot turn Tuesday 12 May
+into Monday 11 May. One reporter had a client in Lisbon get Tuesday and a client in Toronto get
+Monday for the same meeting, which points at time zones and not at date order. The cause logic
+places a report by tenant and channel, so it cannot see this at all: it files these under
+`parser` with everything else from the same tenants. The desk noticed them and wrote them down
+in `desk-notes.json`, and there the matter stopped.
+
+## Why they arrived as one ticket
+
+[Decision 0001](/kb/decisions/0001-dedupe-by-subject) merges a report into an open ticket when the
+subject line matches, and nobody reads the body. Three bugs that make a date look wrong produce
+the same few subject lines, so the desk merged all of them into the first ticket that had one.
+Intake's own tag was no help either: the `intake tagged them` column above is what intake guessed
+from the reporter's browser, and it disagrees with the cause inside every group.
+
+This is what the ticket's own page shows today, with its own component:
+
+<CauseTable ticket={4471} />
+
+The row it marks as not this ticket has had no ticket of its own since April, and the footnote
+under it is the one-day move.
+
+## What to do
+
+- Split #4471: one ticket per problem, each counted on its own. The three tickets are in the
+  [public repo](https://github.com/arahagikoa/mega/issues) this page was written from.
+- Keep the queued parser fix. It is correct, and it is not enough.
+- Decision 0001 needs a replacement record. Matching on a subject line cannot separate two bugs
+  that produce the same subject, and this ticket is what that costs: a group with no ticket for
+  six months.
+
+<RenderStamp {signature} />
