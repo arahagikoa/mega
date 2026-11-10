@@ -1,4 +1,4 @@
-**Reports covered: 374** of the 412 merged into #4471.
+**Reports covered: 374** of the 412 merged into #4471 in the kb export of 2026-10-04. The desk keeps merging reports into #4471, so this is the count in that export, not a running total.
 
 ## What happens
 
