@@ -4,7 +4,7 @@ title: '#4471 · one ticket, more than one problem'
 owner: arahagikoa
 status: proposed
 reviewed: 2026-11-10
-signature: arahagikoa
+signature: v1.eyJzdWIiOiI1OTkyIiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQzMjI3NDUsImV4cCI6MTc5NDQwOTE0NX0.80NN9sFfjAm1ScM64svQ92-tQj8XiyX2O3r6dh-eeWw
 ---
 
 <script>
@@ -14,21 +14,23 @@ signature: arahagikoa
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
 </script>
 
-[#4471](/kb/incidents/4471) is marked known, with one fix queued. The reports merged into it do
-not all describe the same bug. Run the desk's own cause logic over the export and they split,
-and each part needs a fix of its own.
+[#4471](/kb/incidents/4471) was marked known, with one fix queued, and closed on 5 October. The
+reports merged into it do not all describe the same bug. Run the desk's own cause logic over the
+export and they split, and each part needed a fix of its own.
 
 <ProblemTable ticket={4471} />
 
 <Callout kind="warn">
-One fix is queued, and it is the right fix for the largest group only. The other groups stay
-broken after it ships, and the people in them will report again.
+The engineering update on #4471 answers two of these three groups: the parser is fixed, and the
+hint is won't fix because booking-v3 is retired. It says nothing about the third. Those five
+reports were counted into the ticket and closed with it, and nobody has reproduced one.
 </Callout>
 
 ## parser · the shared parser reads every date month first
 
 Every tenant on file writes the day before the month, so a date they type as 12/05 comes back as
-December. This is the bug #4471 names and the one the queued fix is for.
+December. This is the bug #4471 names, and `fix(dates): parse dd/mm for eu locales` in the
+engineering update is the fix for it. Fixed.
 
 ## hint · booking-v3 prints the order its tenants do not use
 
@@ -36,6 +38,10 @@ The booking-v3 form prints `MM/DD/YYYY` under its date field. Its tenants write 
 their people type what the hint tells them, and the form then reads it the tenant's way. The date
 flips for the opposite reason, so a fix to the parser does not touch it. Only form reports from
 booking-v3 tenants land here, which is why this group is small and steady rather than loud.
+
+The engineering update closes this one as won't fix: booking-v3 is retired, so the form that
+printed the hint is gone. That ends the reports. It does not make the group part of the parser
+bug, and 33 people were told for six months that their problem was known and being fixed.
 
 ## one-day move · the invite lands a day out, not a month out
 
@@ -63,11 +69,14 @@ under it is the one-day move.
 
 ## What to do
 
-- Split #4471: one ticket per problem, each counted on its own. The three tickets are in the
-  [public repo](https://github.com/arahagikoa/mega/issues) this page was written from.
-- Keep the queued parser fix. It is correct, and it is not enough.
+- One ticket per problem, each counted on its own, in the
+  [public repo](https://github.com/arahagikoa/mega/issues) this page was written from. The parser
+  ticket is closed as fixed and the hint ticket as won't fix, which is what the update says.
+  **The one-day move ticket stays open**, because #4471 closing did not answer it.
+- Reproduce one of the five. Two of them point at time zones, which is a different kind of bug
+  and may still be live on a product that now parses dates correctly.
 - Decision 0001 needs a replacement record. Matching on a subject line cannot separate two bugs
   that produce the same subject, and this ticket is what that costs: a group with no ticket for
-  six months.
+  six months, and five reports closed without an answer.
 
 <RenderStamp {signature} />

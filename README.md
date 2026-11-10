@@ -15,5 +15,5 @@ the export and fails if they do not add up to the ticket.
 
 ## The page added to the kb
 
-- `kb/support-kb/src/routes/kb/incidents/4471-split/+page.svx` — the page, signed `arahagikoa`
+- `kb/support-kb/src/routes/kb/incidents/4471-split/+page.svx` — the page, signed with the course ticket in its frontmatter
 - `page.html` — the same page as the desk will see it, rendered from that `.svx`
